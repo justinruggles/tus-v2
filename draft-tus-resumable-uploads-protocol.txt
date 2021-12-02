@@ -88,15 +88,16 @@ Table of Contents
 
 1.  Introduction
 
-   HTTP already provides resumable downloads using the Range header.
-   However, on its own HTTP does not contain a standardized mechanism
-   for resumable uploads.  This has lead to a situation where many web
-   services implement a proprietary solution for handling connection
-   issues during file uploads.  Such a scattered landscape makes it
-   impossible to develop clients with resumable upload capabilities in a
-   generic approach without focusing on specific, proprietary solutions.
-   It also limits the benefits of resumable uploads to web services that
-   can free up the resources to implement this.
+   HTTP [HTTP] already provides resumable downloads using the Range
+   header.  However, on its own HTTP does not contain a standardized
+   mechanism for resumable uploads.  This has lead to a situation where
+   many web services implement a proprietary solution for handling
+   connection issues during file uploads.  Such a scattered landscape
+   makes it impossible to develop clients with resumable upload
+   capabilities in a generic approach without focusing on specific,
+   proprietary solutions.  It also limits the benefits of resumable
+   uploads to web services that can free up the resources to implement
+   this.
 
    Resuming a previously interrupted upload continues the data transfer
    where it left off, without the need to transfer the first part again.
@@ -116,21 +117,27 @@ Table of Contents
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
-   "OPTIONAL" in this document are to be interpreted as described in BCP
-   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
+
+   The terms byte sequence, Item, string, sf-binary, sf-boolean, sf-
+   integer, sf-string, and sf-token are imported from
+   [STRUCTURED-FIELDS].
+
+   The terms client and server are imported from [HTTP].
 
 3.  Uploading Overview
 
    The uploading of a file using the Resumable Uploads Protocol consists
    of multiple procedures:
 
-   1) The Upload Transfer Procedure can be used to notify the server
-   that the client wants to begin an upload.  The server should then
-   reserve the required resources to accept the upload from the client.
-   The client also begins transferring the file in the request body.  An
-   informational response can be sent to the client to signal the
-   support of resumable upload on the server.
+   1) The Upload Transfer Procedure (Section 4) can be used to notify
+   the server that the client wants to begin an upload.  The server
+   should then reserve the required resources to accept the upload from
+   the client.  The client also begins transferring the file in the
+   request body.  An informational response can be sent to the client to
+   signal the support of resumable upload on the server.
 
    Client                                  Server
    |                                            |
@@ -170,9 +177,9 @@ Table of Contents
 
                    Figure 2: Offset Retrieving Procedure
 
-   3) After the Offset Retrieving Procedure completes, the client can
-   resume the upload by sending the remaining file content to the
-   server, appending to the already stored data in the upload.
+   3) After the Offset Retrieving Procedure (Section 5) completes, the
+   client can resume the upload by sending the remaining file content to
+   the server, appending to the already stored data in the upload.
 
    Client                                      Server
    |                                                |
@@ -187,7 +194,7 @@ Table of Contents
 
    4) If the client is not interesting in completing the upload anymore,
    it can instruct the server to delete the upload and free all related
-   resources using the Upload Cancellation Procedure.
+   resources using the Upload Cancellation Procedure (Section 6).
 
    Client                                      Server
    |                                                |
@@ -250,21 +257,21 @@ Table of Contents
    server SHOULD reject the attempt to resume an upload with a different
    method with 400 (Bad Request) response.
 
-   The request MUST include the Upload-Token header which uniquely
-   identifies an upload.
+   The request MUST include the Upload-Token header field (Section 7.1)
+   which uniquely identifies an upload.
 
-   When resuming an upload, the Upload-Offset header MUST be set to the
-   resumption offset.  The resumption offset 0 indicates a new upload.
-   The absence of the Upload-Offset header implies the resumption offset
-   of 0.
+   When resuming an upload, the Upload-Offset header field (Section 7.2)
+   MUST be set to the resumption offset.  The resumption offset 0
+   indicates a new upload.  The absence of the Upload-Offset header
+   field implies the resumption offset of 0.
 
    If the end of the request body is not the end of the upload, the
-   Upload-Incomplete header MUST be set to true.
+   Upload-Incomplete header field (Section 7.3) MUST be set to true.
 
    The client MAY send the metadata of the file using headers such as
-   Content-Type and Content-Disposition when starting a new upload.  It
-   is OPTIONAL for the client to repeat the metadata when resuming an
-   upload.
+   Content-Type (see Section 8.3 of [HTTP] and Content-Disposition
+   [RFC6266] when starting a new upload.  It is OPTIONAL for the client
+   to repeat the metadata when resuming an upload.
 
    If the server has no record of the token but the offset is non-zero,
    it MUST respond with 404 (Not Found) status code.
@@ -272,9 +279,9 @@ Table of Contents
    The server MUST terminate any ongoing Upload Transfer Procedure for
    the same token before processing the request body.
 
-   If the offset in the Upload-Offset header does not match the existing
-   file size, the server MUST respond with 400 (Bad Request) status
-   code.
+   If the offset in the Upload-Offset header field does not match the
+   existing file size, the server MUST respond with 400 (Bad Request)
+   status code.
 
    If the request completes successfully and the entire file is
    received, the server MUST acknowledge it by responding with a
@@ -320,10 +327,11 @@ Table of Contents
 
    If the client has no knowledge of whether the server supports
    resumable upload, the Upload Transfer Procedure MAY be used with some
-   additional constraints.  In particular, the Upload-Offset header and
-   the Upload-Incomplete header MUST NOT be sent in the request if the
-   server support is unclear.  This allows the upload to function as if
-   it is a regular upload.
+   additional constraints.  In particular, the Upload-Offset header
+   field (Section 7.2) and the Upload-Incomplete header field
+   (Section 7.3) MUST NOT be sent in the request if the server support
+   is unclear.  This allows the upload to function as if it is a regular
+   upload.
 
    If the server detects the Upload Transfer Procedure with neither the
    Upload-Offset header nor the Upload-Incomplete header, and it
@@ -344,8 +352,9 @@ Table of Contents
 
    If an upload is interrupted, the client MAY attempt to fetch the
    offset of the incomplete upload by sending a HEAD request to the
-   server with the same Upload-Token.  The client MUST NOT initiate this
-   procedure without the knowledge of server support.
+   server with the same Upload-Token header field (Section 7.1).  The
+   client MUST NOT initiate this procedure without the knowledge of
+   server support.
 
    The request MUST use the HEAD method and include the Upload-Token
    header.  The request MUST NOT include the Upload-Offset header or the
@@ -399,8 +408,8 @@ Table of Contents
    If the server has successfully released the resources allocated for
    this token, it MUST send back a 204 (No Content) response.
 
-   The server MUST terminate any ongoing Upload Transfer Procedure for
-   the same token before sending the response.
+   The server MUST terminate any ongoing Upload Transfer Procedure
+   (Section 4) for the same token before sending the response.
 
    If the server has no record of the token in Upload-Token, it MUST
    respond with 404 (Not Found) status code.
@@ -420,8 +429,9 @@ Table of Contents
 
 7.1.  Upload-Token
 
-   Upload-Token is an Item Structured Header.  Its value MUST be either
-   a byte sequence, a string, or a token, and its ABNF is
+   Upload-Token is an Item Structured Header (see Section 3.3 of
+   [STRUCTURED-FIELDS]).  Its value MUST be either a byte sequence, a
+   string, or a token, and its ABNF is
 
    Upload-Token = sf-binary / sf-string / sf-token
 
@@ -496,6 +506,12 @@ Table of Contents
 
 11.  Normative References
 
+   [HTTP]     Fielding, R. T., Nottingham, M., and J. Reschke, "HTTP
+              Semantics", Work in Progress, Internet-Draft, draft-ietf-
+              httpbis-semantics-19, 12 September 2021,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-
+              semantics-19>.
+
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
@@ -506,9 +522,19 @@ Table of Contents
               DOI 10.17487/RFC3864, September 2004,
               <https://www.rfc-editor.org/rfc/rfc3864>.
 
+   [RFC6266]  Reschke, J., "Use of the Content-Disposition Header Field
+              in the Hypertext Transfer Protocol (HTTP)", RFC 6266,
+              DOI 10.17487/RFC6266, June 2011,
+              <https://www.rfc-editor.org/rfc/rfc6266>.
+
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+   [STRUCTURED-FIELDS]
+              Nottingham, M. and P-H. Kamp, "Structured Field Values for
+              HTTP", RFC 8941, DOI 10.17487/RFC8941, February 2021,
+              <https://www.rfc-editor.org/rfc/rfc8941>.
 
 Acknowledgments
 
