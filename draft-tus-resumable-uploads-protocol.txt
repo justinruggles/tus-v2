@@ -5,11 +5,13 @@
 HTTP                                                           M. Kleidl
 Internet-Draft                                           Transloadit Ltd
 Intended status: Standards Track                                J. Mehta
-Expires: 30 May 2022                                            G. Zhang
+Expires: 5 June 2022                                            G. Zhang
                                                               Apple Inc.
                                                                L. Pardue
                                                               Cloudflare
-                                                        26 November 2021
+                                                              S. Matsson
+                                                               JellyHive
+                                                         2 December 2021
 
 
                     tus - Resumable Uploads Protocol
@@ -48,7 +50,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 30 May 2022.
+   This Internet-Draft will expire on 5 June 2022.
 
 Copyright Notice
 
@@ -403,6 +405,9 @@ Table of Contents
    If the server has no record of the token in Upload-Token, it MUST
    respond with 404 (Not Found) status code.
 
+   If the server does not support cancellation, it MUST respond with 405
+   (Method Not Allowed) status code.
+
    :method: DELETE
    :scheme: https
    :authority: example.com
@@ -533,3 +538,9 @@ Authors' Addresses
    Cloudflare
 
    Email: lucaspardue.24.7@gmail.com
+
+
+   Stefan Matsson
+   JellyHive
+
+   Email: s.matsson@gmail.com
