@@ -1353,16 +1353,17 @@ Client                                      Server
 <p id="section-4-1">The Upload Transfer Procedure can be used for either starting a new upload, or resuming an existing upload. A limited form of this procedure <span class="bcp14">MAY</span> be used by the client to start a new upload without the knowledge of server support.<a href="#section-4-1" class="pilcrow">¶</a></p>
 <p id="section-4-2">This procedure is designed to be compatible with a regular upload. Therefore all methods are allowed with the exception of <code>GET</code>, <code>HEAD</code>, <code>DELETE</code>, and <code>OPTIONS</code>. And all response status codes are allowed. The client is <span class="bcp14">RECOMMENDED</span> to use <code>POST</code> request if not otherwise specified.<a href="#section-4-2" class="pilcrow">¶</a></p>
 <p id="section-4-3">The client <span class="bcp14">MUST</span> use the same method throughout an entire upload. The server <span class="bcp14">SHOULD</span> reject the attempt to resume an upload with a different method with <code>400 (Bad Request)</code> response.<a href="#section-4-3" class="pilcrow">¶</a></p>
-<p id="section-4-4">The request <span class="bcp14">MUST</span> include the <code>Upload-Token</code> header field (<a href="#upload-token" class="xref">Section 7.1</a>) which uniquely identifies an upload.<a href="#section-4-4" class="pilcrow">¶</a></p>
-<p id="section-4-5">When resuming an upload, the <code>Upload-Offset</code> header field (<a href="#upload-offset" class="xref">Section 7.2</a>) <span class="bcp14">MUST</span> be set to the resumption offset. The resumption offset 0 indicates a new upload. The absence of the <code>Upload-Offset</code> header field implies the resumption offset of 0.<a href="#section-4-5" class="pilcrow">¶</a></p>
-<p id="section-4-6">If the end of the request body is not the end of the upload, the <code>Upload-Incomplete</code> header field (<a href="#upload-incomplete" class="xref">Section 7.3</a>) <span class="bcp14">MUST</span> be set to true.<a href="#section-4-6" class="pilcrow">¶</a></p>
-<p id="section-4-7">The client <span class="bcp14">MAY</span> send the metadata of the file using headers such as <code>Content-Type</code> (see <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-semantics-19#section-8.3" class="relref">Section 8.3</a> of [<a href="#HTTP" class="xref">HTTP</a>]</span> and <code>Content-Disposition</code> <span>[<a href="#RFC6266" class="xref">RFC6266</a>]</span> when starting a new upload. It is <span class="bcp14">OPTIONAL</span> for the client to repeat the metadata when resuming an upload.<a href="#section-4-7" class="pilcrow">¶</a></p>
-<p id="section-4-8">If the server has no record of the token but the offset is non-zero, it <span class="bcp14">MUST</span> respond with 404 (Not Found) status code.<a href="#section-4-8" class="pilcrow">¶</a></p>
-<p id="section-4-9">The server <span class="bcp14">MUST</span> terminate any ongoing Upload Transfer Procedure for the same token before processing the request body.<a href="#section-4-9" class="pilcrow">¶</a></p>
-<p id="section-4-10">If the offset in the <code>Upload-Offset</code> header field does not match the existing file size, the server <span class="bcp14">MUST</span> respond with 400 (Bad Request) status code.<a href="#section-4-10" class="pilcrow">¶</a></p>
-<p id="section-4-11">If the request completes successfully and the entire file is received, the server <span class="bcp14">MUST</span> acknowledge it by responding with a successful status code between 200 and 299 (inclusive). Server is <span class="bcp14">RECOMMENDED</span> to use <code>201 (Created)</code> response if not otherwise specified. The response <span class="bcp14">MUST NOT</span> include the <code>Upload-Incomplete</code> header.<a href="#section-4-11" class="pilcrow">¶</a></p>
-<p id="section-4-12">If the request completes successfully but the file is not complete yet indicated by the <code>Upload-Incomplete</code> header, the server <span class="bcp14">MUST</span> acknowledge it by responding with the <code>201 (Created)</code> status code with the <code>Upload-Incomplete</code> header set to true.<a href="#section-4-12" class="pilcrow">¶</a></p>
-<div id="section-4-13">
+<p id="section-4-4">The client <span class="bcp14">MUST NOT</span> perform multiple Upload Transfer Procedures (<a href="#upload-transfer" class="xref">Section 4</a>) for the same file in parallel.<a href="#section-4-4" class="pilcrow">¶</a></p>
+<p id="section-4-5">The request <span class="bcp14">MUST</span> include the <code>Upload-Token</code> header field (<a href="#upload-token" class="xref">Section 7.1</a>) which uniquely identifies an upload. The client <span class="bcp14">MUST NOT</span> reuse the token for a different upload.<a href="#section-4-5" class="pilcrow">¶</a></p>
+<p id="section-4-6">When resuming an upload, the <code>Upload-Offset</code> header field (<a href="#upload-offset" class="xref">Section 7.2</a>) <span class="bcp14">MUST</span> be set to the resumption offset. The resumption offset 0 indicates a new upload. The absence of the <code>Upload-Offset</code> header field implies the resumption offset of 0.<a href="#section-4-6" class="pilcrow">¶</a></p>
+<p id="section-4-7">If the end of the request body is not the end of the upload, the <code>Upload-Incomplete</code> header field (<a href="#upload-incomplete" class="xref">Section 7.3</a>) <span class="bcp14">MUST</span> be set to true.<a href="#section-4-7" class="pilcrow">¶</a></p>
+<p id="section-4-8">The client <span class="bcp14">MAY</span> send the metadata of the file using headers such as <code>Content-Type</code> (see <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-semantics-19#section-8.3" class="relref">Section 8.3</a> of [<a href="#HTTP" class="xref">HTTP</a>]</span> and <code>Content-Disposition</code> <span>[<a href="#RFC6266" class="xref">RFC6266</a>]</span> when starting a new upload. It is <span class="bcp14">OPTIONAL</span> for the client to repeat the metadata when resuming an upload.<a href="#section-4-8" class="pilcrow">¶</a></p>
+<p id="section-4-9">If the server has no record of the token but the offset is non-zero, it <span class="bcp14">MUST</span> respond with 404 (Not Found) status code.<a href="#section-4-9" class="pilcrow">¶</a></p>
+<p id="section-4-10">The server <span class="bcp14">MUST</span> terminate any ongoing Upload Transfer Procedure for the same token after validating the request headers before processing the request body. Since the client cannot perform multiple transfers in parallel, the server can assume that the previous attempt has already failed. Therefore, the server <span class="bcp14">MAY</span> abruptly terminate the previous HTTP connection or stream.<a href="#section-4-10" class="pilcrow">¶</a></p>
+<p id="section-4-11">If the offset in the <code>Upload-Offset</code> header field does not match the existing file size, the server <span class="bcp14">MUST</span> respond with 400 (Bad Request) status code.<a href="#section-4-11" class="pilcrow">¶</a></p>
+<p id="section-4-12">If the request completes successfully and the entire file is received, the server <span class="bcp14">MUST</span> acknowledge it by responding with a successful status code between 200 and 299 (inclusive). Server is <span class="bcp14">RECOMMENDED</span> to use <code>201 (Created)</code> response if not otherwise specified. The response <span class="bcp14">MUST NOT</span> include the <code>Upload-Incomplete</code> header.<a href="#section-4-12" class="pilcrow">¶</a></p>
+<p id="section-4-13">If the request completes successfully but the file is not complete yet indicated by the <code>Upload-Incomplete</code> header, the server <span class="bcp14">MUST</span> acknowledge it by responding with the <code>201 (Created)</code> status code with the <code>Upload-Incomplete</code> header set to true.<a href="#section-4-13" class="pilcrow">¶</a></p>
+<div id="section-4-14">
 <pre class="lang-example sourcecode">
 :method: POST
 :scheme: https
@@ -1374,9 +1375,9 @@ upload-token: :SGVs…SGU=:
 :status: 104
 
 :status: 201
-</pre><a href="#section-4-13" class="pilcrow">¶</a>
+</pre><a href="#section-4-14" class="pilcrow">¶</a>
 </div>
-<div id="section-4-14">
+<div id="section-4-15">
 <pre class="lang-example sourcecode">
 :method: POST
 :scheme: https
@@ -1389,9 +1390,9 @@ upload-incomplete: ?1
 
 :status: 201
 upload-incomplete: ?1
-</pre><a href="#section-4-14" class="pilcrow">¶</a>
+</pre><a href="#section-4-15" class="pilcrow">¶</a>
 </div>
-<p id="section-4-15">The client <span class="bcp14">MAY</span> automatically attempt upload resumption when the connection is terminated unexpectedly, or if a server error status code between 500 and 599 (inclusive) is received. The client <span class="bcp14">SHOULD NOT</span> automatically retry if a client error status code between 400 and 499 (inclusive) is received.<a href="#section-4-15" class="pilcrow">¶</a></p>
+<p id="section-4-16">The client <span class="bcp14">MAY</span> automatically attempt upload resumption when the connection is terminated unexpectedly, or if a server error status code between 500 and 599 (inclusive) is received. The client <span class="bcp14">SHOULD NOT</span> automatically retry if a client error status code between 400 and 499 (inclusive) is received.<a href="#section-4-16" class="pilcrow">¶</a></p>
 <div id="feature-detection">
 <section id="section-4.1">
         <h3 id="name-feature-detection">
@@ -1412,11 +1413,12 @@ upload-incomplete: ?1
       </h2>
 <p id="section-5-1">If an upload is interrupted, the client <span class="bcp14">MAY</span> attempt to fetch the offset of the incomplete upload by sending a <code>HEAD</code> request to the server with the same <code>Upload-Token</code> header field (<a href="#upload-token" class="xref">Section 7.1</a>). The client <span class="bcp14">MUST NOT</span> initiate this procedure without the knowledge of server support.<a href="#section-5-1" class="pilcrow">¶</a></p>
 <p id="section-5-2">The request <span class="bcp14">MUST</span> use the <code>HEAD</code> method and include the <code>Upload-Token</code> header. The request <span class="bcp14">MUST NOT</span> include the <code>Upload-Offset</code> header or the <code>Upload-Incomplete</code> header. The server <span class="bcp14">MUST</span> reject the request with the <code>Upload-Offset</code> header or the <code>Upload-Incomplete</code> header by sending a <code>400 (Bad Request)</code> response.<a href="#section-5-2" class="pilcrow">¶</a></p>
-<p id="section-5-3">If the server has resources allocated for this token, it <span class="bcp14">MUST</span> send back a <code>204 (No Content)</code> response with a header <code>Upload-Offset</code> which indicates the resumption offset for the client.<a href="#section-5-3" class="pilcrow">¶</a></p>
-<p id="section-5-4">The server <span class="bcp14">MUST</span> terminate any ongoing Upload Transfer Procedure for the same token before sending the response.<a href="#section-5-4" class="pilcrow">¶</a></p>
-<p id="section-5-5">The response <span class="bcp14">SHOULD</span> include <code>Cache-Control: no-store</code> header to prevent HTTP caching.<a href="#section-5-5" class="pilcrow">¶</a></p>
-<p id="section-5-6">If the server has no record of this token, it <span class="bcp14">MUST</span> respond with <code>404 (Not Found)</code> status code.<a href="#section-5-6" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-5-7">
+<p id="section-5-3">The client <span class="bcp14">MUST NOT</span> perform the Offset Retrieving Procedure (<a href="#offset-retrieving" class="xref">Section 5</a>) while the Upload Transfer Procedures (<a href="#upload-transfer" class="xref">Section 4</a>) is in progress.<a href="#section-5-3" class="pilcrow">¶</a></p>
+<p id="section-5-4">If the server has resources allocated for this token, it <span class="bcp14">MUST</span> send back a <code>204 (No Content)</code> response with a header <code>Upload-Offset</code> which indicates the resumption offset for the client.<a href="#section-5-4" class="pilcrow">¶</a></p>
+<p id="section-5-5">The server <span class="bcp14">MUST</span> terminate any ongoing Upload Transfer Procedure (<a href="#upload-transfer" class="xref">Section 4</a>) for the same token before generating the offset. This ensures that the offset is accepted by a subsequent Upload Transfer Procedure. The server <span class="bcp14">MAY</span> terminate an ongoing Upload Transfer Procedure by abruptly terminating the HTTP connection or stream.<a href="#section-5-5" class="pilcrow">¶</a></p>
+<p id="section-5-6">The response <span class="bcp14">SHOULD</span> include <code>Cache-Control: no-store</code> header to prevent HTTP caching.<a href="#section-5-6" class="pilcrow">¶</a></p>
+<p id="section-5-7">If the server has no record of this token, it <span class="bcp14">MUST</span> respond with <code>404 (Not Found)</code> status code.<a href="#section-5-7" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5-8">
 <pre>
 :method: HEAD
 :scheme: https
@@ -1427,9 +1429,9 @@ upload-token: :SGVs…SGU=:
 :status: 204
 upload-offset: 100
 cache-control: no-store
-</pre><a href="#section-5-7" class="pilcrow">¶</a>
+</pre><a href="#section-5-8" class="pilcrow">¶</a>
 </div>
-<p id="section-5-8">The client <span class="bcp14">MAY</span> automatically start uploading from the beginning using Upload Creation Procedure if <code>404 (Not Found)</code> status code is received. The client <span class="bcp14">SHOULD NOT</span> automatically retry if a status code other than 204 and 404 is received.<a href="#section-5-8" class="pilcrow">¶</a></p>
+<p id="section-5-9">The client <span class="bcp14">MAY</span> automatically start uploading from the beginning using Upload Transfer Procedure (<a href="#upload-transfer" class="xref">Section 4</a>) if <code>404 (Not Found)</code> status code is received. The client <span class="bcp14">SHOULD NOT</span> automatically retry if a status code other than 204 and 404 is received.<a href="#section-5-9" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="upload-cancellation">
@@ -1440,7 +1442,7 @@ cache-control: no-store
 <p id="section-6-1">If the client wants to terminate the transfer without the ability to resume, it <span class="bcp14">MAY</span> send a <code>DELETE</code> request to the server along with the <code>Upload-Token</code> which is an indication that the client is no longer interested in uploading this body and the server can release resources associated with this token. The client <span class="bcp14">MUST NOT</span> initiate this procedure without the knowledge of server support.<a href="#section-6-1" class="pilcrow">¶</a></p>
 <p id="section-6-2">The request <span class="bcp14">MUST</span> use the <code>DELETE</code> method and include the <code>Upload-Token</code> header. The request <span class="bcp14">MUST NOT</span> include the <code>Upload-Offset</code> header or the <code>Upload-Incomplete</code> header. The server <span class="bcp14">MUST</span> reject the request with the <code>Upload-Offset</code> header or the <code>Upload-Incomplete</code> header by sending a <code>400 (Bad Request)</code> response.<a href="#section-6-2" class="pilcrow">¶</a></p>
 <p id="section-6-3">If the server has successfully released the resources allocated for this token, it <span class="bcp14">MUST</span> send back a <code>204 (No Content)</code> response.<a href="#section-6-3" class="pilcrow">¶</a></p>
-<p id="section-6-4">The server <span class="bcp14">MUST</span> terminate any ongoing Upload Transfer Procedure (<a href="#upload-transfer" class="xref">Section 4</a>) for the same token before sending the response.<a href="#section-6-4" class="pilcrow">¶</a></p>
+<p id="section-6-4">The server <span class="bcp14">MAY</span> terminate any ongoing Upload Transfer Procedure (<a href="#upload-transfer" class="xref">Section 4</a>) for the same token before sending the response by abruptly terminating the HTTP connection or stream.<a href="#section-6-4" class="pilcrow">¶</a></p>
 <p id="section-6-5">If the server has no record of the token in <code>Upload-Token</code>, it <span class="bcp14">MUST</span> respond with <code>404 (Not Found)</code> status code.<a href="#section-6-5" class="pilcrow">¶</a></p>
 <p id="section-6-6">If the server does not support cancellation, it <span class="bcp14">MUST</span> respond with <code>405 (Method Not Allowed)</code> status code.<a href="#section-6-6" class="pilcrow">¶</a></p>
 <div id="section-6-7">
@@ -1472,7 +1474,8 @@ upload-token: :SGVs…SGU=:
 Upload-Token = sf-binary / sf-string / sf-token
 </pre><a href="#section-7.1-2" class="pilcrow">¶</a>
 </div>
-<p id="section-7.1-3">The value of the token <span class="bcp14">SHOULD</span> be a byte sequence with a minimum of 256-bit (16 byte) cryptographically-secure random binary data, or a cryptographic token with equivalent or stronger security properties.<a href="#section-7.1-3" class="pilcrow">¶</a></p>
+<p id="section-7.1-3">If not otherwise specified by the server, the client is <span class="bcp14">RECOMMENDED</span> to use 256-bit (32 bytes) cryptographically-secure random binary data as the value of the <code>Upload-Token</code>, in order to ensure that it is globally unique and non-guessable.<a href="#section-7.1-3" class="pilcrow">¶</a></p>
+<p id="section-7.1-4">A conforming implementation <span class="bcp14">MUST</span> be able to handle a <code>Upload-Token</code> field value of at least 128 octets.<a href="#section-7.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="upload-offset">
@@ -1518,7 +1521,7 @@ Upload-Incomplete = sf-boolean
 <a href="#section-9" class="section-number selfRef">9. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
 <p id="section-9-1"><code>Upload-Token</code> can be selected by the client which has no knowledge of tokens picked by other client, so uniqueness cannot be guaranteed. If the token is guessable, an attacker can append malicious data to ongoing uploads. To mitigate these issues, 256-bit cryptographically-secure random binary data is recommended for the token.<a href="#section-9-1" class="pilcrow">¶</a></p>
-<p id="section-9-2">It is <span class="bcp14">OPTIONAL</span> for the server to partition upload tokens based on client identity established through other channels, such as Cookie or TLS client authentication.<a href="#section-9-2" class="pilcrow">¶</a></p>
+<p id="section-9-2">It is <span class="bcp14">OPTIONAL</span> for the server to partition upload tokens based on client identity established through other channels, such as Cookie or TLS client authentication. The client <span class="bcp14">MAY</span> relax the token strength if it is aware of server-side partitioning.<a href="#section-9-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">
