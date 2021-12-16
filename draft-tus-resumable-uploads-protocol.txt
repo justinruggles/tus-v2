@@ -5,13 +5,13 @@
 HTTP                                                           M. Kleidl
 Internet-Draft                                           Transloadit Ltd
 Intended status: Standards Track                                J. Mehta
-Expires: 5 June 2022                                            G. Zhang
+Expires: 19 June 2022                                           G. Zhang
                                                               Apple Inc.
                                                                L. Pardue
                                                               Cloudflare
                                                               S. Matsson
                                                                JellyHive
-                                                         2 December 2021
+                                                        16 December 2021
 
 
                     tus - Resumable Uploads Protocol
@@ -50,7 +50,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 5 June 2022.
+   This Internet-Draft will expire on 19 June 2022.
 
 Copyright Notice
 
@@ -445,9 +445,9 @@ Table of Contents
 
 7.1.  Upload-Token
 
-   Upload-Token is an Item Structured Header (see Section 3.3 of
-   [STRUCTURED-FIELDS]).  Its value MUST be either a byte sequence, a
-   string, or a token, and its ABNF is
+   The Upload-Token request header field is an Item Structured Header
+   (see Section 3.3 of [STRUCTURED-FIELDS]).  Its value MUST be either a
+   byte sequence, a string, or a token, and its ABNF is
 
    Upload-Token = sf-binary / sf-string / sf-token
 
@@ -461,15 +461,15 @@ Table of Contents
 
 7.2.  Upload-Offset
 
-   Upload-Offset is an Item Structured Header.  Its value MUST be an
-   integer.  Its ABNF is
+   The Upload-Offset request and response header field is an Item
+   Structured Header.  Its value MUST be an integer.  Its ABNF is
 
    Upload-Offset = sf-integer
 
 7.3.  Upload-Incomplete
 
-   Upload-Incomplete is an Item Structured Header.  Its value MUST be a
-   boolean.  Its ABNF is
+   The Upload-Incomplete request and response header field is an Item
+   Structured Header.  Its value MUST be a boolean.  Its ABNF is
 
    Upload-Incomplete = sf-boolean
 
